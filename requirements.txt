@@ -1,0 +1,27 @@
+# --- GUI Framework ---
+PyQt5==5.15.11
+
+# --- Deep Learning Core ---
+# Note: Installing torch via pip usually installs the CPU version by default.
+# See README for GPU installation instructions.
+torch>=2.3.1
+torchvision>=0.18.1
+torchmetrics==1.8.2
+
+# --- YOLO & Object Detection ---
+ultralytics==8.3.75
+
+# --- Image Processing & Math ---
+opencv-python==4.10.0.84
+numpy==1.25.0
+Pillow==10.3.0
+
+# --- Utilities ---
+PyYAML==6.0.1
+tqdm==4.66.4
+requests==2.32.2
+
+# --- Inference Acceleration ---
+# You have onnxruntime installed.
+# Users with NVIDIA GPUs should install 'onnxruntime-gpu' instead.
+onnxruntime>=1.19.0
