@@ -42,7 +42,7 @@
 
 ### Option 1: Download EXE (Windows, Recommended)
 
-1. Go to [Releases](https://github.com/KeenForgeAI/KeenForge/releases) and download `KeenForge_Setup.exe`
+1. Go to [Releases](https://github.com/KeenForgeAI/KeenForge/releases) and download `KeenForge.exe`
 2. Double-click to launch
 3. Load your image folder
 4. Type what you want to detect (e.g., `scratch, dent`)
