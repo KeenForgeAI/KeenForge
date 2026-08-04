@@ -14,7 +14,7 @@ from src.ui.main_window import MainWindow
 
 # Set App ID for Windows Taskbar Icon
 try:
-    myappid = 'mycompany.autolabelpro.v5.0'
+    myappid = 'com.keenforgeai.keenforge.v1.0'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except ImportError:
     pass

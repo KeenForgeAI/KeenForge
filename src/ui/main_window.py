@@ -55,7 +55,7 @@ class FocusScrollComboBox(QComboBox):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.settings = QSettings("MyCompany", "AutoLabelPro")
+        self.settings = QSettings("KeenForgeAI", "KeenForge")
         self.curr_lang = self.settings.value("language", "zh")
 
         if os.path.exists("logo.png"): self.setWindowIcon(QIcon("logo.png"))
@@ -717,7 +717,7 @@ class MainWindow(QMainWindow):
             self.radio_transfer.setChecked(True)
 
     def closeEvent(self, event):
-        settings = QSettings("MyCompany", "AutoLabelPro")
+        settings = QSettings("KeenForgeAI", "KeenForge")
         settings.setValue("dataset_root", self.dataset_root)
         settings.setValue("current_index", self.current_index)
         settings.setValue("model_path", self.current_model_path)
@@ -737,7 +737,7 @@ class MainWindow(QMainWindow):
     def restore_state(self):
         self.is_restoring = True
         try:
-            settings = QSettings("MyCompany", "AutoLabelPro")
+            settings = QSettings("KeenForgeAI", "KeenForge")
             idx = settings.value("base_model_index", 0, type=int)
             if 0 <= idx < self.combo_yolo_model.count(): self.combo_yolo_model.setCurrentIndex(idx)
             if settings.value("geometry"): self.restoreGeometry(settings.value("geometry"))

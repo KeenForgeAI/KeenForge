@@ -3,7 +3,7 @@
 # Multi-language dictionary for UI localization
 TRANS = {
     "zh": {
-        "APP_TITLE": "AutoLabel Pro: 智能标注 & 自动推理",
+        "APP_TITLE": "KeenForge: 锐锻 — 智能标注 & 自动推理",
         "BTN_LOAD_DIR": "📂 加载 Dataset 目录",
         "BTN_LOAD_MODEL": "⚖️ 加载已训练模型 (.pt/.pth)",
         "BTN_TRAIN": "🚀 开始训练",

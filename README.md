@@ -1,9 +1,9 @@
 # KeenForge: Train Your Own AI Vision Model — No Code Required
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red)](https://pytorch.org/)
-[![GitHub stars](https://img.shields.io/github/stars/KeenForgeAI/AutoLabel-Pro?style=social)](https://github.com/KeenForgeAI/AutoLabel-Pro)
+[![GitHub stars](https://img.shields.io/github/stars/KeenForgeAI/KeenForge?style=social)](https://github.com/KeenForgeAI/KeenForge)
 
 > **CVPR 2026 Demo Track** · Formerly AutoLabel Pro
 
@@ -42,7 +42,7 @@
 
 ### Option 1: Download EXE (Windows, Recommended)
 
-1. Go to [Releases](https://github.com/KeenForgeAI/AutoLabel-Pro/releases) and download `KeenForge_Setup.exe`
+1. Go to [Releases](https://github.com/KeenForgeAI/KeenForge/releases) and download `KeenForge_Setup.exe`
 2. Double-click to launch
 3. Load your image folder
 4. Type what you want to detect (e.g., `scratch, dent`)
@@ -52,8 +52,8 @@
 
 ```bash
 # 1. Clone
-git clone https://github.com/KeenForgeAI/AutoLabel-Pro.git
-cd AutoLabel-Pro
+git clone https://github.com/KeenForgeAI/KeenForge.git
+cd KeenForge
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -124,7 +124,7 @@ The more you label, the smarter the model gets. All training happens locally on 
 - [ ] One-click API deployment
 - [ ] pip install support
 
-**Want to help?** Check the [Issues](https://github.com/KeenForgeAI/AutoLabel-Pro/issues) tab for `good first issue` tasks.
+**Want to help?** Check the [Issues](https://github.com/KeenForgeAI/KeenForge/issues) tab for `good first issue` tasks.
 
 ---
 
@@ -154,7 +154,7 @@ If KeenForge helps your research, please cite:
   title={KeenForge: No-Code Desktop Tool for Expert-Led Object Detection Model Training},
   author={Lu Gan and Xi Li},
   year={2026},
-  howpublished={\url{https://github.com/KeenForgeAI/AutoLabel-Pro}},
+  howpublished={\url{https://github.com/KeenForgeAI/KeenForge}},
   note={CVPR 2026 Demo Track}
 }
 ```
@@ -163,7 +163,7 @@ If KeenForge helps your research, please cite:
 
 ## License
 
-AGPL v3.0 — Free for open source use. [Contact us](mailto:lucygan113@gmail.com) for commercial licensing.
+MIT License — Copyright (c) 2026 KeenForgeAI. Free for open source and commercial use. See [LICENSE](LICENSE) for details.
 
 ---
 

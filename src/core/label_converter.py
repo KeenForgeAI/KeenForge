@@ -173,7 +173,7 @@ class LabelConverter:
             int: Number of images processed.
         """
         coco_dict = {
-            "info": {"description": "Exported from AutoLabelPro", "year": 2025},
+            "info": {"description": "Exported from KeenForge", "year": 2026},
             "licenses": [],
             "images": [],
             "annotations": [],
