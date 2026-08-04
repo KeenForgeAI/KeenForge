@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red)](https://pytorch.org/)
-[![GitHub stars](https://img.shields.io/github/stars/KeenForgeAI/KeenForge?style=social)](https://github.com/KeenForgeAI/KeenForge)
+
 
 > **CVPR 2026 Demo Track** · Formerly AutoLabel Pro
 
