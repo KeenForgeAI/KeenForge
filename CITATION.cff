@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: >-
+  If you use KeenForge in academic work, please cite it as below.
+title: >-
+  KeenForge: a local-first, offline image annotation and model-training desktop
+  tool
+type: software
+authors:
+  - name: "KeenForgeAI"
+    website: "https://github.com/KeenForgeAI"
+repository-code: "https://github.com/KeenForgeAI/KeenForge"
+url: "https://github.com/KeenForgeAI/KeenForge"
+abstract: >-
+  KeenForge is a desktop application for building object-detection datasets and
+  models without writing code. It combines dataset cleaning, a human-in-the-loop
+  active-learning annotation loop, and local model training in a single offline
+  tool: label a small seed set, the model trains in the background, pre-labels
+  the next batch, and the expert corrects it. When the dataset is finished, the
+  model is trained. All processing runs locally; images never leave the machine.
+keywords:
+  - annotation
+  - image annotation
+  - active learning
+  - human-in-the-loop
+  - object detection
+  - YOLO
+  - offline
+  - no-code
+license: MIT
+version: 1.0.0
+date-released: "2026-09-20"
