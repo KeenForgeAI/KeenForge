@@ -151,7 +151,7 @@ If KeenForge helps your research, please cite:
 
 ```bibtex
 @misc{keenforge2026,
-  title={KeenForge: No-Code Desktop Tool for Expert-Led Object Detection Model Training},
+  title={KeenForge: a local-first, offline image annotation and model-training desktop tool},
   author={Lu Gan and Xi Li},
   year={2026},
   howpublished={\url{https://github.com/KeenForgeAI/KeenForge}},
