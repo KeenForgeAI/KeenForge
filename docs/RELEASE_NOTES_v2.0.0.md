@@ -47,11 +47,30 @@ python src/main.py
 Windows users who build an executable can find the PyInstaller entry point in
 `entry.py` (the spec is kept local).
 
-### Windows bundle
+## Install / Run
 
-This release includes a Windows onedir build (`KeenForge/`). Unpack and run
-`KeenForge.exe`. It bundles a CUDA-enabled PyTorch, so it is large (~4 GB unpacked)
-and requires an NVIDIA GPU for fast training (it still runs on CPU, slowly).
+### One-click launcher (recommended, ~5 MB download)
+
+Download `KeenForge-2.0.0-source.zip` from Releases, unpack it, then:
+
+- **Windows**: double-click `run_windows.bat`
+- **Linux / macOS**: `./run_unix.sh`
+
+The launcher creates a local `.venv`, installs dependencies automatically on first run
+(a few minutes), and starts KeenForge. The heavy PyTorch/Ultralytics stack is fetched on
+your machine instead of being bundled, so the download stays small.
+
+### Manual (from source)
+
+```bash
+git clone https://github.com/KeenForgeAI/KeenForge.git
+cd KeenForge
+pip install -r requirements.txt
+python src/main.py
+```
+
+> A self-contained Windows executable is possible but large (CUDA-enabled PyTorch pushes
+> it past 4 GB unpacked); the launcher route is preferred for distribution.
 
 ## Datasets
 
@@ -62,13 +81,10 @@ GC10-DET · NEU-DET · DeepPCB · PKU-Market-PCB · TXL-PBC · Raccoon
 
 ## Known issues
 
-- The Windows bundle reports training mAP as `0` when `torchmetrics` is not present in
-  the build environment. Run from source with `pip install torchmetrics` for mAP.
-- The bundled build uses the brute-force cosine path for semantic dedup (hnswlib is not
-  bundled); this is fast for the target dataset sizes (a few thousand images) but slower
-  at 10k+ scale.
-- The bundled build depends on the environment it was produced in; for a reproducible
-  setup prefer running from source with `requirements.txt`.
+- `pip install torch` on Windows installs the CPU build by default. For NVIDIA GPU
+  training/inference, install the CUDA build:
+  `pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121`.
+- Training mAP requires `torchmetrics`; it is included in `requirements.txt`.
 
 ## Roadmap 2.x
 

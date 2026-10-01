@@ -91,7 +91,18 @@ model from a fraction of the annotation budget.
 5. Label the cluster representatives → the model auto-trains on the round quota
 6. Turn on **Model Compare** to review and correct predictions → repeat
 
-### Option 2: Run from source
+### Option 2: One-click launcher (small download, auto-installs the environment)
+
+Download the `KeenForge-2.0.0-source.zip` from [Releases](https://github.com/KeenForgeAI/KeenForge/releases), unpack it, then:
+
+- **Windows**: double-click `run_windows.bat`
+- **Linux / macOS**: `./run_unix.sh`
+
+The launcher creates a local `.venv`, installs the dependencies automatically on first run
+(a few minutes), and then starts KeenForge. This keeps the download small — the heavy
+PyTorch/Ultralytics stack is fetched on your machine instead of being bundled.
+
+### Option 3: Manual (from source)
 
 ```bash
 # 1. Clone

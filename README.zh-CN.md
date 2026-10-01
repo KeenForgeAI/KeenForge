@@ -77,16 +77,17 @@
 
 ## 快速开始（3 分钟）
 
-### 方式一：下载 EXE（Windows，推荐）
+### 方式一：一键启动器（小体积，自动安装环境）
 
-1. 到 [Releases](https://github.com/KeenForgeAI/KeenForge/releases) 下载最新的 `KeenForge` 构建
-2. 双击启动
-3. 加载你的图片文件夹
-4. 在工具栏点**数据除重**和**相似分组**
-5. 标注聚类代表 → 达到本轮配额后自动训练
-6. 打开**模型比对**复核并修正预测 → 循环
+到 [Releases](https://github.com/KeenForgeAI/KeenForge/releases) 下载 `KeenForge-2.0.0-source.zip`，解压后：
 
-### 方式二：从源码运行
+- **Windows**：双击 `run_windows.bat`
+- **Linux / macOS**：`./run_unix.sh`
+
+启动器会在本地创建 `.venv`，首次运行时**自动安装依赖**（几分钟），然后启动 KeenForge。
+这样下载包很小 —— 体积大的 PyTorch/Ultralytics 在你机器上现场安装，而不是打进包里。
+
+### 方式二：手动从源码运行
 
 ```bash
 # 1. 克隆
