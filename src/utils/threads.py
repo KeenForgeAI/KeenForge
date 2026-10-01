@@ -2,6 +2,7 @@
 import os
 import traceback
 from PyQt5.QtCore import QThread, pyqtSignal
+from src.config import t
 
 class ModelLoaderThread(QThread):
     """
@@ -18,7 +19,7 @@ class ModelLoaderThread(QThread):
     def run(self):
         try:
             self.engine.load_model(self.model_path)
-            self.finished_signal.emit(True, f"Loaded: {os.path.basename(self.model_path)}")
+            self.finished_signal.emit(True, os.path.basename(self.model_path))
         except Exception as e:
             traceback.print_exc()
             self.finished_signal.emit(False, str(e))

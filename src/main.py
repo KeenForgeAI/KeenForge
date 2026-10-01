@@ -4,23 +4,33 @@ import os
 import ctypes
 import multiprocessing
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
 
 # Ensure the src directory is in the python path if running directly
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.ui.main_window import MainWindow
+# Fix for OpenMP conflict - MUST be before any torch/hnswlib import
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# Set App ID for Windows Taskbar Icon
+# hnswlib must import before torch to avoid OpenMP runtime clash
 try:
-    myappid = 'com.keenforgeai.keenforge.v1.0'
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    import hnswlib  # noqa: F401
 except ImportError:
     pass
 
-# Fix for OpenMP conflict
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+from src.ui.main_window import MainWindow
+
+from src.utils.app_id import APP_ID, register_app_id
+
+# Set App ID + register the taskbar display name/icon so Windows shows
+# KeenForge's own logo instead of a generic python.exe fallback.
+try:
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)
+except Exception:
+    pass
+_APP_ICON = register_app_id()
+
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
@@ -33,6 +43,9 @@ if __name__ == "__main__":
         QApplication.setAttribute(Qt.AA_Use96Dpi)
 
     app = QApplication(sys.argv)
+
+    if _APP_ICON:
+        app.setWindowIcon(QIcon(_APP_ICON))
 
     # 2. Set Global Font (Segoe UI for Windows clarity)
     font = QFont("Segoe UI", 14)

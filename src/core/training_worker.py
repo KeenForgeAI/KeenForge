@@ -11,6 +11,7 @@ import torch
 import glob
 from torch.utils.data import Dataset, DataLoader
 from typing import Tuple, List, Dict, Any
+from src.config import t
 
 # --- Import torchmetrics for mAP calculation ---
 try:
@@ -169,8 +170,9 @@ class TrainingProcess(multiprocessing.Process):
                 # Skip the main 'best' file
                 if filename == f"best{extension}":
                     continue
-                # Skip the main 'best_modelname' file
-                if filename.startswith("best_") and not any(char.isdigit() for char in filename):
+                # Skip ALL best_* files (round-named like best_x_r7_m0938.pt
+                # and the plain best_modelname.pt) - never delete trained models
+                if filename.startswith("best_"):
                     continue
 
                 # Assume remaining files are backups
@@ -194,7 +196,7 @@ class TrainingProcess(multiprocessing.Process):
 
     def run(self):
         try:
-            self.status_queue.put(("start", "Initializing training environment..."))
+            self.status_queue.put(("start", t("WRK_INIT_ENV")))
 
             model_name = os.path.basename(self.base_model_path).lower()
 
@@ -220,7 +222,7 @@ class TrainingProcess(multiprocessing.Process):
         # Prevent recursive naming (best_best_...)
         if model_name.startswith("best_"):
             model_name = model_name[5:]
-        self.status_queue.put(("start", f"Starting PyTorch Training: {model_name}"))
+        self.status_queue.put(("start", t("WRK_START_TORCH", model_name)))
 
         # 1. Load Model
         print(f"Loading Torchvision model: {model_name}")
@@ -373,33 +375,56 @@ class TrainingProcess(multiprocessing.Process):
         if model_name.startswith("best_"):
             model_name = model_name[5:]
 
-        self.status_queue.put(("start", f"Starting YOLO Training: {model_name}"))
+        self.status_queue.put(("start", t("WRK_START_YOLO", model_name)))
 
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        # Load Model
-        if "rtdetr" in self.base_model_path.lower():
-            model = RTDETR(self.base_model_path)
-        else:
-            model = YOLO(self.base_model_path)
+        # Load Model (with fallback to local download)
+        self.status_queue.put(("start", t("WRK_LOAD_MODEL", model_name)))
+        try:
+            # If model file doesn't exist locally, try to resolve via ultralytics
+            if not os.path.exists(self.base_model_path):
+                self.status_queue.put(("start", t("WRK_DOWNLOAD_WEIGHTS", model_name)))
+                # Try to use a local copy if available in project root
+                local_copy = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                                          f"{model_name}.pt")
+                if os.path.exists(local_copy):
+                    self.base_model_path = local_copy
+                    self.status_queue.put(("start", t("WRK_USE_LOCAL", local_copy)))
+                else:
+                    self.status_queue.put(("start", t("WRK_DOWNLOAD_ULTRALYTICS")))
+
+            if "rtdetr" in self.base_model_path.lower():
+                model = RTDETR(self.base_model_path)
+            else:
+                model = YOLO(self.base_model_path)
+        except Exception as e:
+            self.status_queue.put(("error", t("WRK_MODEL_LOAD_FAIL", e, model_name)))
+            return
 
         # 2. Define Callback
         def on_train_epoch_end(trainer):
             try:
                 current_epoch = trainer.epoch + 1
                 total = trainer.epochs
-                metrics = trainer.metrics
-                map50 = metrics.get("metrics/mAP50(B)", 0.0)
+                metrics = trainer.metrics or {}
+                # mAP50 key tolerance (ultralytics 8.x naming)
+                map50 = metrics.get("metrics/mAP50(B)", 0.0) or 0.0
+                if not map50:
+                    map50 = metrics.get("metrics/mAP50", 0.0) or 0.0
 
+                # Loss: trainer.loss is updated every batch and survives epoch end
+                # (loss_items is cleared to None at epoch end in ultralytics 8.4)
                 train_loss = 0.0
-                if hasattr(trainer, 'loss_items'):
-                    loss_items = trainer.loss_items
-                    if loss_items is not None:
-                        if isinstance(loss_items, torch.Tensor):
-                            train_loss = loss_items.sum().item()
-                        else:
-                            train_loss = float(loss_items)
+                loss_val = getattr(trainer, 'loss', None)
+                if loss_val is None:
+                    loss_val = getattr(trainer, 'loss_items', None)
+                if loss_val is not None:
+                    try:
+                        train_loss = float(loss_val.sum().item()) if hasattr(loss_val, 'sum') else float(loss_val)
+                    except Exception:
+                        train_loss = 0.0
 
                 progress_data = {
                     "epoch": current_epoch,
@@ -408,8 +433,10 @@ class TrainingProcess(multiprocessing.Process):
                     "loss": train_loss
                 }
                 self.status_queue.put(("step", progress_data))
-            except:
-                pass
+            except Exception as e:
+                print(f"on_train_epoch_end callback error: {e}")
+                import traceback
+                traceback.print_exc()
 
         model.add_callback("on_fit_epoch_end", on_train_epoch_end)
 
@@ -436,29 +463,13 @@ class TrainingProcess(multiprocessing.Process):
         weights_dir = os.path.dirname(generated_best)
 
         if os.path.exists(generated_best):
-            # A. Target filename
-            target_best_name = f"best_{model_name}.pt"
-            target_best_path = os.path.join(weights_dir, target_best_name)
-
-            # B. Backup existing
-            if os.path.exists(target_best_path):
-                timestamp = int(time.time())
-                backup_name = f"backup_{timestamp}_{target_best_name}"
-                backup_path = os.path.join(weights_dir, backup_name)
-                try:
-                    shutil.copy(target_best_path, backup_path)
-                    print(f"Backup created: {backup_name}")
-                except Exception as e:
-                    print(f"Backup failed: {e}")
-
-            # C. Overwrite
-            shutil.copy(generated_best, target_best_path)
-
-            # D. Cleanup
+            # Cleanup stale intermediates (last.pt, old backup_*). The raw best.pt
+            # is reported to the UI, which archives it as a round-named file and
+            # removes it afterwards.
             self.cleanup_weights_dir(weights_dir, extension=".pt", max_backups=3)
 
-            # E. Success
-            self.status_queue.put(("success", target_best_path))
+            # Success
+            self.status_queue.put(("success", generated_best))
 
         else:
-            self.status_queue.put(("error", "Training failed: best.pt not found"))
+            self.status_queue.put(("error", t("WRK_BEST_NOT_FOUND")))

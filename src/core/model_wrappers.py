@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 from typing import List, Tuple, Union
+from src.config import t
 
 # Import Torchvision models and weights
 from torchvision.models.detection import (
@@ -77,7 +78,7 @@ class ClassicWrapper:
         # 1. Read Image
         img_raw = cv2.imread(image_path)
         if img_raw is None:
-            return [], "Load Error"
+            return [], t("WRAP_LOAD_ERROR")
         h_raw, w_raw = img_raw.shape[:2]
 
         # 2. Preprocess (BGR -> RGB -> Tensor 0-1)
@@ -109,10 +110,11 @@ class ClassicWrapper:
                 cx = x1 + w / 2
                 cy = y1 + h / 2
 
-                final_results.append([cls_id, cx / w_raw, cy / h_raw, w / w_raw, h / h_raw])
+                final_results.append([cls_id, cx / w_raw, cy / h_raw, w / w_raw, h / h_raw,
+                                      float(score)])
                 count += 1
 
-        return final_results, f"Classic Found: {count}"
+        return final_results, t("WRAP_CLASSIC_FOUND", count)
 
 
 # =========================================================
@@ -180,7 +182,7 @@ class OnnxWrapper:
         """
         img_raw = cv2.imread(image_path)
         if img_raw is None:
-            return [], "Load Error"
+            return [], t("WRAP_LOAD_ERROR")
         h_raw, w_raw = img_raw.shape[:2]
 
         # 1. Preprocess
@@ -248,7 +250,8 @@ class OnnxWrapper:
                 min(max(cx / w_raw, 0), 1),
                 min(max(cy / h_raw, 0), 1),
                 min(max(w_res / w_raw, 0), 1),
-                min(max(h_res / h_raw, 0), 1)
+                min(max(h_res / h_raw, 0), 1),
+                float(confidences[idx])
             ])
 
-        return final_results, f"ONNX Found: {len(final_results)}"
+        return final_results, t("WRAP_ONNX_FOUND", len(final_results))

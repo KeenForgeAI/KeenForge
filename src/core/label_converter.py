@@ -1,11 +1,18 @@
 # src/core/label_converter.py
 
 import os
+import re
 import json
 import cv2
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from typing import List, Tuple, Dict, Any
+
+
+# 类别名白名单：仅接受字母/数字/下划线/连字符且长度 >= 2；
+# 其余（如 "d"、"?"、空串）视为无效，收集到 skipped 列表上报调用方，
+# 绝不静默生成垃圾类别。
+_CLASS_NAME_RE = re.compile(r'^[A-Za-z0-9_\-]+$')
 
 
 class LabelConverter:
@@ -25,6 +32,8 @@ class LabelConverter:
         """
         self.dataset_root = dataset_root
         self.classes = classes
+        # 导入校验中被拒绝的类别名（见 from_pascal_voc）；供调用方向用户提示。
+        self.skipped_classes: List[str] = []
 
         # ========================================================
         # Intelligent Path Detection Logic
@@ -362,6 +371,9 @@ class LabelConverter:
 
         count = 0
         new_classes_found = []
+        skipped = []
+        # 暴露被拒绝的名字给调用方（校验逻辑见下）。
+        self.skipped_classes = skipped
         temp_classes = list(self.classes)
 
         for xml_file in xml_files:
@@ -390,7 +402,15 @@ class LabelConverter:
 
                 # 3. Iterate objects
                 for obj in root.findall('object'):
-                    name = obj.find('name').text
+                    name_node = obj.find('name')
+                    name = (name_node.text or '').strip() if name_node is not None else ''
+
+                    # 拒绝畸形类别名（如 "d"、"?"、空串），绝不静默生成垃圾类别；
+                    # 这些名字收集到 self.skipped_classes 由调用方提示用户。
+                    if len(name) < 2 or not _CLASS_NAME_RE.match(name):
+                        if name not in skipped:
+                            skipped.append(name)
+                        continue
 
                     if name not in temp_classes:
                         temp_classes.append(name)

@@ -21,6 +21,7 @@ venv_release/
 *.pt
 *.pth
 *.onnx
+*.part
 
 # Training outputs
 runs/
@@ -35,3 +36,11 @@ Thumbs.db
 
 # PyInstaller
 *.spec
+
+# Internal working docs (contain credentials/paths — never publish)
+docs/KeenForge_交接文档_*.md
+docs/聚类引导标注方案*.md
+
+# OMO tool runtime data
+.omo/
+

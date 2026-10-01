@@ -10,6 +10,7 @@ torchmetrics==1.8.2
 
 # --- YOLO & Object Detection ---
 ultralytics==8.3.75
+openai-clip>=1.0.1
 
 # --- Image Processing & Math ---
 opencv-python==4.10.0.84
@@ -25,3 +26,7 @@ requests==2.32.2
 # You have onnxruntime installed.
 # Users with NVIDIA GPUs should install 'onnxruntime-gpu' instead.
 onnxruntime>=1.19.0
+
+# --- Image Deduplication ---
+pdqhash>=0.2.5
+hnswlib>=0.8.0
